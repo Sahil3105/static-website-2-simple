@@ -4,16 +4,14 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Clone the Git repository
-                git 'https://github.com/Sahil3105/static-website-2-simple.git'
+                git url: 'https://github.com/Sahil3105/static-website-2-simple.git', branch: 'main'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image using the Dockerfile in the root directory
-                    dockerImage = docker.build("sahil3105/myimage1:latest")
+                    docker.build('sahil3105/myimage:latest')
                 }
             }
         }
@@ -22,7 +20,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        dockerImage.push()
+                        sh 'docker tag sahil3105/myimage:latest index.docker.io/sahil3105/myimage:latest'
+                        sh 'docker push index.docker.io/sahil3105/myimage:latest'
                     }
                 }
             }
